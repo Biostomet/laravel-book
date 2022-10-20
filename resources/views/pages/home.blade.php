@@ -1,6 +1,7 @@
 <x-layouts.main-layout title="Acceuil">
+    <x-navbar />
     <p class="text-indigo-500 text-center text-4xl pt-10 pb-10 font-black">Laravel Books</p>
-    <div class="flex flex-wrap" id="container_card">
+    <div class="overflow-x-auto mt-16 mb-16" id="container_card">
         <table class="table w-full ">
             <thead>
                 <tr>
@@ -16,7 +17,7 @@
                     $i = 1;
                 @endphp
                 @forelse ($books as $book)
-                    <tr class=" ">
+                    <tr class="text-center ">
                         <th class="text-blue-500 font-black"> {{ $i++ }} </th>
                         <td>{{ $book->title }}</td>
                         <td>{{ $book->price }}</td>

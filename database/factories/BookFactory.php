@@ -22,7 +22,7 @@ class BookFactory extends Factory
             'image' => fake()->imageUrl(640, 480, 'animals', true),
             'price' => fake()->randomFloat(1, 5, 50),
             'author' => fake()->name(),
-            'nombre-pages' => fake()->randomNumber(),
+            'nombre_pages' => fake()->randomNumber(),
             'created_at' => now(),
         ];
     }

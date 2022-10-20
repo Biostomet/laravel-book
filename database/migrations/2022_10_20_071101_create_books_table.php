@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('image');
             $table->float('price');
             $table->string('author');
-            $table->integer('nombre-pages');
+            $table->integer('nombre_pages');
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Http\Requests\StoreBookRequest;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateBookRequest;
 
 class BookController extends Controller
@@ -26,7 +27,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.create');
     }
 
     /**
@@ -37,7 +38,30 @@ class BookController extends Controller
      */
     public function store(StoreBookRequest $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|min:5|string|max:50',
+            'description' => 'required|min:20|max:2000|string',
+            'image' => 'sometimes|required|image|mimes:png,jpg,jpeg|max:20000',
+            'price' => 'required|integer',
+            'author' => 'required|string|min:4|max:50',
+            'nombre_pages' => 'required|integer|min:40|max:200000',
+            'updated_at' => now(),
+        ]);
+
+        $validateImg = $request->file('image')->store('books');
+
+        $new_book = Book::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'image' => $validateImg,
+            'price' => $request->price,
+            'author' => $request->author,
+            'nombre_pages' => $request->nombre_pages,
+            'updated_at' => now(),
+        ]);
+        return redirect()
+            ->route('home')
+            ->with('status', 'Le post a bien été ajouté');
     }
 
     /**
@@ -59,7 +83,7 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        //
+        return view('pages.edit', compact('book'));
     }
 
     /**
@@ -71,7 +95,35 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request, Book $book)
     {
-        //
+        // verify if file exist
+        if ($request->hasFile('image')) {
+            //delete previous img
+            Storage::delete($book->image);
+            //store the new img
+            $book->image = $request->file('image')->store('books');
+        }
+        $request->validate([
+            'title' => 'required|min:5|string|max:50',
+            'description' => 'required|min:20|max:2000|string',
+            'image' => 'sometimes|required|image|mimes:png,jpg,jpeg|max:20000',
+            'price' => 'required|integer',
+            'author' => 'required|string|min:4|max:50',
+            'nombre_pages' => 'required|integer|min:40|max:200000',
+        ]);
+
+        //update to DB
+        $book->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'image' => $book->image,
+            'price' => $request->price,
+            'author' => $request->author,
+            'nombre_pages' => $request->nombre_pages,
+            'updated_at' => now(),
+        ]);
+        return redirect()
+            ->route('home')
+            ->with('status', 'Le post a bien été modifié');
     }
 
     /**
@@ -82,6 +134,9 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        //
+        $book->delete();
+        return redirect()
+            ->route('home')
+            ->with('status', "L'article a bien été supprimé");
     }
 }
